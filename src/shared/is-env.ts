@@ -25,9 +25,10 @@ function isBun(): boolean {
 }
 
 function isNode(): boolean {
-  // @ts-ignore
-  const isNode = typeof process !== "undefined" && process.versions.node;
-  return Boolean(isNode);
+  if (process.versions.bun || process.title !== "node") {
+    return false;
+  }
+  return Boolean(process.versions.node);
 }
 
 function isDeno(): boolean {
