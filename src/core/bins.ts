@@ -13,12 +13,11 @@ if (suporte.isSupported === false) {
 }
 
 async function boostrap() {
-  const absolutePath = await new FileSystem(env).cwd();
+  const fs = new FileSystem(env);
+  const absolutePath = await fs.cwd();
+  const file = await fs.readFile("package.json");
   console.log(absolutePath);
-
-  const file = await new FileSystem(env).readFile("examples/test.text");
-  console.log("file", file);
-  // export class Bins {}
+  console.log(file);
 }
 
 boostrap();
