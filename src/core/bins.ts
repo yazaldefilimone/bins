@@ -8,6 +8,7 @@ const suporte = isSuporte(env);
 if (!suporte) {
   throw new Error("Bins v1: unknown environment");
 }
+console.log(suporte);
 if (suporte.isSupported === false) {
   throw ErrorEnvNotSupported(suporte.name);
 }
