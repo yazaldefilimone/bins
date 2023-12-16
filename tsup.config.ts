@@ -1,6 +1,6 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  target: "es6",
+  target: "es2020",
   outDir: "build",
 });
