@@ -12,7 +12,7 @@ const env = {
   },
   bun: {
     name: EnvironmentType.bun,
-    isSupported: false,
+    isSupported: true,
   },
   deno: {
     name: EnvironmentType.deno,
