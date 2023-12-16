@@ -25,10 +25,11 @@ function isBun(): boolean {
 }
 
 function isNode(): boolean {
-  if (process.versions.bun || process.title !== "node") {
+  const { bun, deno } = process.versions;
+  if (bun || deno) {
     return false;
   }
-  return Boolean(process.versions.node);
+  return Boolean(process.title.endsWith("node"));
 }
 
 function isDeno(): boolean {
