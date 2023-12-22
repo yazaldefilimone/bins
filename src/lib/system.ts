@@ -3,6 +3,10 @@ import { EnvironmentType } from "shared/is-env";
 
 import fast_glob from "fast-glob";
 
+export type readFileType = (
+  path: string,
+  type?: "utf-8",
+) => Promise<string | Buffer | ArrayBuffer>;
 type ListenerEventType = "rename" | "change" | "error" | "close";
 type ListenerEventFileNameType = Error | string | null;
 
@@ -36,14 +40,23 @@ class FileSystem {
     }
   }
 
-  public async readFile(path: string): Promise<string> {
+  public async readFile(
+    path: string,
+    type?: "utf-8",
+  ): Promise<string | Buffer | ArrayBuffer> {
     switch (this.env) {
       case EnvironmentType.node: {
         const fs = await import("fs");
-        return fs.readFileSync(path, "utf-8");
+        if (type) {
+          return fs.readFileSync(path, type);
+        }
+        return fs.readFileSync(path);
       }
       case EnvironmentType.bun: {
-        return Bun.file(path).text();
+        if (type === "utf-8") {
+          return Bun.file(path).text();
+        }
+        return Bun.file(path).arrayBuffer();
       }
       default:
         throw ErrorEnvNotSupported(this.env);
@@ -56,10 +69,6 @@ class FileSystem {
       case EnvironmentType.bun: {
         const process = await import("process");
         return process.cwd();
-      }
-      case EnvironmentType.browser:
-      case EnvironmentType.deno: {
-        throw ErrorEnvNotSupported(this.env);
       }
       default: {
         throw ErrorEnvNotSupported(this.env);
@@ -75,10 +84,9 @@ class System {
   }
 
   async loadFiles(pathname: string, extension: string): Promise<string[]> {
-    const completePath = `${pathname}/**/*${extension}`;
     switch (this.env) {
       case EnvironmentType.node: {
-        const files = await fast_glob.async(completePath, {
+        const files = await fast_glob.async(`${pathname}/**/*${extension}`, {
           ignore: ["**/node_modules/**"],
         });
         return files;
